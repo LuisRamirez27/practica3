@@ -39,9 +39,20 @@ class DatabaseTareas {
         where: 'idTarea=?', whereArgs: [registro['idTarea']]);
   }
 
-  Future<List<tareasModel>> getTareas() async {
+  Future<List<tareasModel>> getCompleted() async {
     var conexion = await database;
-    var result = await conexion!.query(_nombreTabla);
+    var result = await conexion!.query(_nombreTabla, where: 'entregada <>""');
     return result.map((tareaMap) => tareasModel.fromMap(tareaMap)).toList();
+  }
+
+  Future<List<tareasModel>> getIncompleted() async {
+    var conexion = await database;
+    var result = await conexion!.query(_nombreTabla, where: 'entregada=""');
+    return result.map((tareaMap) => tareasModel.fromMap(tareaMap)).toList();
+  }
+
+  Future<int> delete(int id) async {
+    var conexion = await database;
+    return conexion!.delete(_nombreTabla, where: 'idTarea=?', whereArgs: [id]);
   }
 }
